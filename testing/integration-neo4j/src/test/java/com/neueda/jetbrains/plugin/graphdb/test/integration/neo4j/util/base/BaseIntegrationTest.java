@@ -66,6 +66,7 @@ public abstract class BaseIntegrationTest extends LightCodeInsightFixtureTestCas
         configuration.put(Neo4jBoltConfiguration.PORT, port);
         configuration.put(Neo4jBoltConfiguration.USER, user);
         configuration.put(Neo4jBoltConfiguration.PASSWORD, password);
+        configuration.put(Neo4jBoltConfiguration.IS_SECURE, "0");
 
         return component().dataSources().getDataSourceContainer().createDataSource(
                 null,

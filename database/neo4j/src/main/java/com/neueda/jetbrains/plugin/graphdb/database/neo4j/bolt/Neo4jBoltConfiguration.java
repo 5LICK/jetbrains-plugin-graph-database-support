@@ -8,6 +8,7 @@ public class Neo4jBoltConfiguration {
     public static final String PORT = "port";
     public static final String USER = "user";
     public static final String PASSWORD = "password";
+    public static final String IS_SECURE = "isSecure";
 
     private final Map<String, String> configuration;
 
@@ -29,5 +30,9 @@ public class Neo4jBoltConfiguration {
 
     public String getPassword() {
         return configuration.get(PASSWORD);
+    }
+
+    public String getIsSecure()  {
+        return configuration.get(IS_SECURE);
     }
 }

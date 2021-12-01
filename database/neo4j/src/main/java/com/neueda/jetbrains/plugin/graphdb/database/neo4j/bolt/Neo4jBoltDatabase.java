@@ -10,6 +10,7 @@ import org.neo4j.driver.exceptions.ClientException;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Communicates with Neo4j 3.0+ database using Bolt driver.
@@ -18,6 +19,8 @@ public class Neo4jBoltDatabase implements GraphDatabaseApi {
 
     private final String url;
     private final AuthToken auth;
+    private final boolean isSecureConnection;
+    private final String[] schemes = new String[] {"bolt://", "bolt+s://", "bolt+ssc://", "bolt+routing://"};
 
     public Neo4jBoltDatabase(Map<String, String> configuration) {
         this(new Neo4jBoltConfiguration(configuration));
@@ -28,7 +31,9 @@ public class Neo4jBoltDatabase implements GraphDatabaseApi {
         Integer port = configuration.getPort();
         String username = configuration.getUser();
         String password = configuration.getPassword();
-        if (host.startsWith("bolt://") || host.startsWith("bolt+routing://")) {
+        this.isSecureConnection = (configuration.getIsSecure().equals("1"));
+        
+        if (Stream.of(schemes).anyMatch(s -> host.startsWith(s))) {
             this.url = String.format("%s:%s", host, port);
         } else {
             this.url = String.format("bolt://%s:%s", host, port);
@@ -48,7 +53,7 @@ public class Neo4jBoltDatabase implements GraphDatabaseApi {
     @Override
     public GraphQueryResult execute(String query, Map<String, Object> statementParameters) {
         try {
-            Driver driver = GraphDatabase.driver(url, auth);
+            Driver driver = this.initDriver();
             try {
                 try (Session session = driver.session()) {
 
@@ -78,5 +83,13 @@ public class Neo4jBoltDatabase implements GraphDatabaseApi {
     @Override
     public GraphMetadata metadata() {
         throw new IllegalStateException("Not implemented");
+    }
+
+    private Driver initDriver() {
+        if(this.isSecureConnection) {
+            Config config = Config.builder().withEncryption().build();
+            return GraphDatabase.driver(url, auth, config);
+        }
+        return GraphDatabase.driver(url, auth);
     }
 }

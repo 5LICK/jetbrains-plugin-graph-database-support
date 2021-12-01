@@ -20,6 +20,7 @@ public class TestSimpleGraph {
 
         Map<String, String> config = new HashMap<>();
         config.put(Neo4jBoltConfiguration.HOST, "localhost");
+        config.put(Neo4jBoltConfiguration.IS_SECURE, "0");
 //        config.put(Neo4jBoltConfiguration.PASSWORD)
 //        config.put(Neo4jBoltConfiguration.PORT)
 //        config.put(Neo4jBoltConfiguration.USER)

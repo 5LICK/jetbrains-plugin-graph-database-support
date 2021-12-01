@@ -35,6 +35,7 @@ public class Neo4jBoltDataSourceDialog extends DataSourceDialog {
     private JButton testConnectionButton;
     private JPanel loadingPanel;
     private AsyncProcessIcon loadingIcon;
+    private JCheckBox isSecureConnection;
 
     public Neo4jBoltDataSourceDialog(Project project, DataSourcesView dataSourcesView, DataSourceApi dataSourceToEdit) {
         this(project, dataSourcesView);
@@ -81,12 +82,14 @@ public class Neo4jBoltDataSourceDialog extends DataSourceDialog {
             String port = conf.get(Neo4jBoltConfiguration.PORT);
             String user = conf.get(Neo4jBoltConfiguration.USER);
             String password = conf.get(Neo4jBoltConfiguration.PASSWORD);
+            String isSecure = conf.get(Neo4jBoltConfiguration.IS_SECURE);
 
             dataSourceNameField.setText(dataSourceToEdit.getName());
             hostField.setText(host);
             portField.setText(port);
             userField.setText(user);
             passwordField.setText(password);
+            isSecureConnection.setSelected((isSecure.equals("1")));
         }
         return content;
     }
@@ -100,6 +103,7 @@ public class Neo4jBoltDataSourceDialog extends DataSourceDialog {
         configuration.put(Neo4jBoltConfiguration.PORT, data.port);
         configuration.put(Neo4jBoltConfiguration.USER, data.user);
         configuration.put(Neo4jBoltConfiguration.PASSWORD, data.password);
+        configuration.put(Neo4jBoltConfiguration.IS_SECURE, data.isSecure);
 
         return dataSourcesComponent.getDataSourceContainer().createDataSource(
                 dataSourceToEdit,
@@ -130,6 +134,7 @@ public class Neo4jBoltDataSourceDialog extends DataSourceDialog {
         data.port = portField.getText();
         data.user = userField.getText();
         data.password = String.valueOf(passwordField.getPassword()); // TODO: use password API
+        data.isSecure = (isSecureConnection.isSelected())  ? "1" : "0";
     }
 
     private void createUIComponents() {
@@ -142,5 +147,6 @@ public class Neo4jBoltDataSourceDialog extends DataSourceDialog {
         private String port;
         private String user;
         private String password;
+        private String isSecure;
     }
 }
